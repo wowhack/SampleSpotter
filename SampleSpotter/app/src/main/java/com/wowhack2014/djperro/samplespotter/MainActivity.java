@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
         EchoNest echoNest = new EchoNest();
 
         new DownloadFilesTask().execute();
-        new DownloadFilesTask2().execute();
+        new CheckIfSongIsSampled().execute();
     }
 
 
@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DownloadFilesTask2 extends AsyncTask<Elements,Elements, Elements> {
+    private class CheckIfSongIsSampled extends AsyncTask<Elements,Elements, Elements> {
         protected Elements doInBackground(Elements... strings) {
 
             EchoNest echoNest = new EchoNest();
@@ -77,6 +77,14 @@ public class MainActivity extends Activity {
 
             System.out.println("FINISHED LOOKING FOR WEBSITE");
 
+            if (sampledEntry.first().toString().contains("Contains samples")) {
+                System.out.println("-----> SAMPLED <----");
+                sampledEntry = doc.select(".trackDetails a");
+                System.out.println("SAMPLED TRACK: " + sampledEntry.first());
+            } else {
+
+            }
+
             return sampledEntry;
         }
 
@@ -85,11 +93,21 @@ public class MainActivity extends Activity {
 
             System.out.println("OUTPUT:");
 
-            System.out.println(result.first().toString());
 
-            if (result.first().toString().contains("Contains samples")) {
-                System.out.println("JA DET FAKKING GÖR DEN!");
-            }
+            String resultingString = result.first().toString();
+
+            resultingString = resultingString.substring(resultingString.indexOf("title=\"") + 7, resultingString.indexOf("</a>"));
+
+            String song = resultingString.substring(resultingString.indexOf("\">")+2);
+            String artist = resultingString.substring(0, resultingString.indexOf("\">"));
+            artist = artist.substring(0, artist.length() - (song.length()+1));
+
+
+            System.out.println("ARTIST: " + artist + " SONG: " + song);
+
+
+
+            // SHOW SAMPLED BUTTON - GUI
         }
     }
 

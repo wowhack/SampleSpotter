@@ -15,6 +15,6 @@ public interface EchoNestService {
     WhoSampledArtist whosampledArtistId();
 
 
-    @GET("/song/search?api_key=WA8XCMX5SD37HII8Y&format=json&results=1&artist=radiohead&title=karma%20police&bucket=id:whosampled&limit=true&bucket=tracks")
+    @GET("/song/search?api_key=WA8XCMX5SD37HII8Y&format=json&results=1&artist=avicii&title=penguin&bucket=id:whosampled&limit=true&bucket=tracks")
     WhoSampledTrack whosampledSongId();
 }

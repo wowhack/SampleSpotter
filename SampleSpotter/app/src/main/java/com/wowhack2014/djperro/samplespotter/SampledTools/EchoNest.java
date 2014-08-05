@@ -35,4 +35,11 @@ public class EchoNest {
         return service;
     }
 
+    public boolean isSongSampled(String track, String artist) {
+
+
+
+        return true;
+    }
+
 }
