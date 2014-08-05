@@ -10,12 +10,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.wowhack2014.djperro.samplespotter.SampledTools.EchoNest;
+import com.wowhack2014.djperro.samplespotter.SampledTools.Models.Song.Response;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by perthoresson on 05/08/14.
@@ -33,6 +36,9 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
     public static String track;
     public static String artist;
 
+    public static String sampledArtist;
+    public static String sampledSong;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         // This is sent with all broadcasts, regardless of type. The value is taken from
@@ -47,6 +53,8 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
             trackId = intent.getExtras().getString("id");
             track = intent.getExtras().getString("track");
             artist = intent.getExtras().getString("artist");
+
+            EventBus.getDefault().post(new SpotifySongChanged(true));
 
             artist = artist.replaceAll("\\s", "%20");
             track = track.replaceAll("\\s", "%20");
@@ -99,7 +107,13 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
             //System.out.println(strings[0]);
            // System.out.println(strings[1]);
 
-            String song = echoNest.getService().whosampledSongId(strings[0]).getResponse().getSongs().get(0).getTracks().get(0).getForeign_id();
+            Response response = echoNest.getService().whosampledSongId(strings[0]).getResponse();
+
+            if (response.getSongs().size() == 0) {
+                return null;
+            }
+            String song = response.getSongs().get(0).getTracks().get(0).getForeign_id();
+
 
             song = song.substring(song.lastIndexOf(":")+1);
 
@@ -149,9 +163,14 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
 
             System.out.println("ARTIST: " + artist + " SONG: " + song);
 
+            sampledArtist = artist;
+            sampledSong = song;
 
 
             // SHOW SAMPLED BUTTON - GUI
         }
+
     }
+
+
 }
