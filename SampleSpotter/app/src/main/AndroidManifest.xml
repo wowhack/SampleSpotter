@@ -24,6 +24,23 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+
+        <receiver
+            android:name="StickyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.spotify.music.playbackstatechanged"/>
+                <action android:name="com.spotify.music.metadatachanged"/>
+                <!--<action android:name="com.spotify.music.queuechanged"/>-->
+            </intent-filter>
+
+        </receiver>
+
+
+
     </application>
 
 </manifest>

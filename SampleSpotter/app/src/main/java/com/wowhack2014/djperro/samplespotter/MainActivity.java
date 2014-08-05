@@ -7,15 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.wowhack2014.djperro.samplespotter.SampledTools.EchoNest;
-import com.wowhack2014.djperro.samplespotter.SampledTools.Models.Artist.Artist;
-import com.wowhack2014.djperro.samplespotter.SampledTools.Models.Song.Song;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -29,12 +26,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EchoNest echoNest = new EchoNest();
+        //new DownloadFilesTask().execute();
 
-        new DownloadFilesTask().execute();
-        new CheckIfSongIsSampled().execute();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,78 +48,4 @@ public class MainActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private class CheckIfSongIsSampled extends AsyncTask<Elements,Elements, Elements> {
-        protected Elements doInBackground(Elements... strings) {
-
-            EchoNest echoNest = new EchoNest();
-
-            String song = echoNest.getService().whosampledSongId().getResponse().getSongs().get(0).getTracks().get(0).getForeign_id();
-
-            song = song.substring(song.lastIndexOf(":")+1);
-
-            System.out.println("http://www.whosampled.com/track/view/" + song);
-
-            System.out.println("LOOKING FOR WEBSITE");
-            Document doc = null;
-            try {
-                doc = Jsoup.connect("http://www.whosampled.com/track/view/" + song).get();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Elements sampledEntry = doc.select(".sectionHeader");
-
-            System.out.println("FINISHED LOOKING FOR WEBSITE");
-
-            if (sampledEntry.first().toString().contains("Contains samples")) {
-                System.out.println("-----> SAMPLED <----");
-                sampledEntry = doc.select(".trackDetails a");
-                System.out.println("SAMPLED TRACK: " + sampledEntry.first());
-            } else {
-
-            }
-
-            return sampledEntry;
-        }
-
-
-        protected void onPostExecute(Elements result) {
-
-            System.out.println("OUTPUT:");
-
-
-            String resultingString = result.first().toString();
-
-            resultingString = resultingString.substring(resultingString.indexOf("title=\"") + 7, resultingString.indexOf("</a>"));
-
-            String song = resultingString.substring(resultingString.indexOf("\">")+2);
-            String artist = resultingString.substring(0, resultingString.indexOf("\">"));
-            artist = artist.substring(0, artist.length() - (song.length()+1));
-
-
-            System.out.println("ARTIST: " + artist + " SONG: " + song);
-
-
-
-            // SHOW SAMPLED BUTTON - GUI
-        }
-    }
-
-    private class DownloadFilesTask extends AsyncTask<List<Artist>, List<Artist>, List<Artist>> {
-        protected List<Artist> doInBackground(List<Artist>... strings) {
-
-            EchoNest echoNest = new EchoNest();
-
-            return echoNest.getWhoSampledArtist().getResponse().getArtists();
-        }
-
-
-        protected void onPostExecute(List<Artist> result) {
-
-            for (Artist artist : result) {
-                System.out.println("NAME: " + artist.getName() + " FOREIGN: " + artist.getForeignIds() + " ID: "+artist.getId());
-            }
-        }
-    }
-
 }
