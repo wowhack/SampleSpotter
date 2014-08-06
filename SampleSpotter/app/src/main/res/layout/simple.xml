@@ -10,8 +10,8 @@
 
         <com.wowhack2014.djperro.samplespotter.AnimatedGifImageView
             android:id="@+id/animatedGifView"
-            android:layout_width="620dp"
-            android:layout_height="400dp" />
+            android:layout_width="540dp"
+            android:layout_height="260dp" />
 
 
          <TextView

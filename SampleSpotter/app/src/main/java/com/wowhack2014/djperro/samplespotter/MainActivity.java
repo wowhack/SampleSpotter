@@ -9,15 +9,11 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-
-import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.SampledFloatingWindow;
-import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.StandOutWindow;
 
 import de.greenrobot.event.EventBus;
 
 
-public class    MainActivity extends Activity {
+public class MainActivity extends Activity {
 
     private static final String CLIENT_ID = "1681de3691974b09a68eaf26ffdb6ede";
     private static final String REDIRECT_URI = "samplespotter://callback ";
@@ -55,11 +51,7 @@ public class    MainActivity extends Activity {
 
     public void onEventMainThread(SpotifySongChanged event) {
         if (event.isStateChanged()) {
-            TextView textView = new TextView(this);
 
-            textView = (TextView) findViewById(R.id.hello);
-
-            textView.setText(StickyBroadcastReceiver.artist);
         }
     }
 

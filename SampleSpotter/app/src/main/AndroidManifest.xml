@@ -28,8 +28,11 @@
         
         <service android:name=".FloatingSampledPlayer.standout.SampledFloatingWindow">
 
+
         </service>
 
+        <service android:name=".FloatingSampledPlayer.standout.SampledPlayerFloatingView">
+            </service>
 
         <receiver
             android:name="StickyBroadcastReceiver"

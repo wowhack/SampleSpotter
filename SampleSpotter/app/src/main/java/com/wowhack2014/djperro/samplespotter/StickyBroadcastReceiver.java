@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.SampledFloatingWindow;
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.SampledPlayerFloatingView;
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.SimpleWindow;
 import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.StandOutWindow;
 import com.wowhack2014.djperro.samplespotter.SampledTools.EchoNest;
 import com.wowhack2014.djperro.samplespotter.SampledTools.Models.Song.Response;
@@ -19,8 +21,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by perthoresson on 05/08/14.
@@ -61,14 +61,13 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
             artist = intent.getExtras().getString("artist");
 
             StandOutWindow.closeAll(context, SampledFloatingWindow.class);
-            EventBus.getDefault().post(new SpotifySongChanged(true));
+            StandOutWindow.closeAll(context, SampledPlayerFloatingView.class);
+            StandOutWindow.show(context, SampledFloatingWindow.class, StandOutWindow.DEFAULT_ID);
 
-            artist = artist.replaceAll("\\s", "%20");
-            track = track.replaceAll("\\s", "%20");
+            String tempArtist = artist.replaceAll("\\s", "%20");
+            String tempTrack = track.replaceAll("\\s", "%20");
 
-            String asdf = "WA8XCMX5SD37HII8Y&format=json&results=1&artist=" + artist + "&title=" + track + "&bucket=id:whosampled&limit=true&bucket=tracks";
-
-            String send[] = {track};
+            String asdf = "WA8XCMX5SD37HII8Y&format=json&results=1&artist=" + tempArtist + "&title=" + tempTrack + "&bucket=id:whosampled&limit=true&bucket=tracks";
 
             new CheckIfSongIsSampled().execute(asdf);
 
@@ -80,6 +79,10 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
         if(intent.getExtras() != null && (intent.getExtras().getBoolean("playing") || !intent.getExtras().getBoolean("playing"))){
             isPlaying = intent.getExtras().getBoolean("playing");
             System.out.println(isPlaying);
+
+            if (isPlaying == false) {
+                //StandOutWindow.closeAll(context, SampledFloatingWindow.class);
+            }
         }
 
         //if(intent.getExtras() != null && intent.getExtras().getString(""))
@@ -104,6 +107,13 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
         System.out.println("KÖRT SKITEN");*/
     }
 
+    public static void openPlayer() {
+        StandOutWindow.closeAll(context, SampledPlayerFloatingView.class);
+        StandOutWindow.closeAll(context, SampledFloatingWindow.class);
+        StandOutWindow.show(context, SampledPlayerFloatingView.class, StandOutWindow.DEFAULT_ID);
+
+        System.out.println("OPPPEN PLAYYER");
+    }
 
 
     private class CheckIfSongIsSampled extends AsyncTask<String,Elements, Elements> {
@@ -156,6 +166,7 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
 
             if (result == null) {
                 System.out.println("---- NOT SAMPLED ----");
+                SampledFloatingWindow.setIcon(false);
                 return;
             }
 
@@ -173,9 +184,7 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
             sampledArtist = artist;
             sampledSong = song;
 
-
-            StandOutWindow.closeAll(context, SampledFloatingWindow.class);
-            StandOutWindow.show(context, SampledFloatingWindow.class, StandOutWindow.DEFAULT_ID);
+            SampledFloatingWindow.setIcon(true);
 
             // SHOW SAMPLED BUTTON - GUI
         }
