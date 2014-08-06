@@ -11,6 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.SampledFloatingWindow;
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.StandOutWindow;
+
 import de.greenrobot.event.EventBus;
 
 
@@ -23,11 +26,15 @@ public class    MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // setContentView(R.layout.activity_main);
 
         //new DownloadFilesTask().execute();
         EventBus.getDefault().register(this);
 
+        StandOutWindow.closeAll(this, SampledFloatingWindow.class);
+        StandOutWindow.show(this, SampledFloatingWindow.class, StandOutWindow.DEFAULT_ID);
+
+        finish();
     }
 
     @Override

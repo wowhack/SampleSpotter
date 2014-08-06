@@ -3,6 +3,7 @@
     package="com.wowhack2014.djperro.samplespotter" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
@@ -23,6 +24,10 @@
             android:name=".SpotifyService"
             android:enabled="true"
             android:exported="true" >
+        </service>
+        
+        <service android:name=".FloatingSampledPlayer.standout.SampledFloatingWindow">
+
         </service>
 
 
