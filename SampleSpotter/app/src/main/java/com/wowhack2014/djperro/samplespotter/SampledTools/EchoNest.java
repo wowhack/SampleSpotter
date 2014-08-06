@@ -17,29 +17,16 @@ public class EchoNest {
 
 
     public EchoNest() {
-
-
         RestAdapter restAdapter = new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint("http://developer.echonest.com/api/v4")
                 .build();
 
         service = restAdapter.create(EchoNestService.class);
     }
 
-
-    public WhoSampledArtist getWhoSampledArtist() {
-        return service.whosampledArtistId();
-    }
-
     public EchoNestService getService() {
         return service;
-    }
-
-    public boolean isSongSampled(String track, String artist) {
-
-
-
-        return true;
     }
 
 }

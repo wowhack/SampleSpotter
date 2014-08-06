@@ -3,6 +3,7 @@
     package="com.wowhack2014.djperro.samplespotter" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
@@ -24,6 +25,27 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+        
+        <service android:name=".FloatingSampledPlayer.standout.SampledFloatingWindow">
+
+        </service>
+
+
+        <receiver
+            android:name="StickyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.spotify.music.playbackstatechanged"/>
+                <action android:name="com.spotify.music.metadatachanged"/>
+                <!--<action android:name="com.spotify.music.queuechanged"/>-->
+            </intent-filter>
+
+        </receiver>
+
+
+
     </application>
 
 </manifest>

@@ -1,24 +1,23 @@
 package com.wowhack2014.djperro.samplespotter;
 
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
-import com.wowhack2014.djperro.samplespotter.SampledTools.EchoNest;
-import com.wowhack2014.djperro.samplespotter.SampledTools.Models.Artist.Artist;
-import com.wowhack2014.djperro.samplespotter.SampledTools.Models.Song.Song;
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.SampledFloatingWindow;
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.StandOutWindow;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.List;
+import de.greenrobot.event.EventBus;
 
 
-public class MainActivity extends Activity {
+public class    MainActivity extends Activity {
 
     private static final String CLIENT_ID = "1681de3691974b09a68eaf26ffdb6ede";
     private static final String REDIRECT_URI = "samplespotter://callback ";
@@ -27,14 +26,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // setContentView(R.layout.activity_main);
 
-        EchoNest echoNest = new EchoNest();
+        //new DownloadFilesTask().execute();
+        EventBus.getDefault().register(this);
 
-        new DownloadFilesTask().execute();
-        new CheckIfSongIsSampled().execute();
+        finish();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,77 +53,46 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class CheckIfSongIsSampled extends AsyncTask<Elements,Elements, Elements> {
-        protected Elements doInBackground(Elements... strings) {
+    public void onEventMainThread(SpotifySongChanged event) {
+        if (event.isStateChanged()) {
+            TextView textView = new TextView(this);
 
-            EchoNest echoNest = new EchoNest();
+            textView = (TextView) findViewById(R.id.hello);
 
-            String song = echoNest.getService().whosampledSongId().getResponse().getSongs().get(0).getTracks().get(0).getForeign_id();
-
-            song = song.substring(song.lastIndexOf(":")+1);
-
-            System.out.println("http://www.whosampled.com/track/view/" + song);
-
-            System.out.println("LOOKING FOR WEBSITE");
-            Document doc = null;
-            try {
-                doc = Jsoup.connect("http://www.whosampled.com/track/view/" + song).get();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Elements sampledEntry = doc.select(".sectionHeader");
-
-            System.out.println("FINISHED LOOKING FOR WEBSITE");
-
-            if (sampledEntry.first().toString().contains("Contains samples")) {
-                System.out.println("-----> SAMPLED <----");
-                sampledEntry = doc.select(".trackDetails a");
-                System.out.println("SAMPLED TRACK: " + sampledEntry.first());
-            } else {
-
-            }
-
-            return sampledEntry;
-        }
-
-
-        protected void onPostExecute(Elements result) {
-
-            System.out.println("OUTPUT:");
-
-
-            String resultingString = result.first().toString();
-
-            resultingString = resultingString.substring(resultingString.indexOf("title=\"") + 7, resultingString.indexOf("</a>"));
-
-            String song = resultingString.substring(resultingString.indexOf("\">")+2);
-            String artist = resultingString.substring(0, resultingString.indexOf("\">"));
-            artist = artist.substring(0, artist.length() - (song.length()+1));
-
-
-            System.out.println("ARTIST: " + artist + " SONG: " + song);
-
-
-
-            // SHOW SAMPLED BUTTON - GUI
+            textView.setText(StickyBroadcastReceiver.artist);
         }
     }
 
-    private class DownloadFilesTask extends AsyncTask<List<Artist>, List<Artist>, List<Artist>> {
-        protected List<Artist> doInBackground(List<Artist>... strings) {
+    private void viewOnSpotify(String artist, String track) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setAction(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH);
+            intent.setComponent(new ComponentName(
+                    "com.spotify.music",
+                    "com.spotify.music.MainActivity"));
+            intent.putExtra(SearchManager.QUERY, artist + " - " + track);
+            this.startActivity(intent);
 
-            EchoNest echoNest = new EchoNest();
-
-            return echoNest.getWhoSampledArtist().getResponse().getArtists();
-        }
-
-
-        protected void onPostExecute(List<Artist> result) {
-
-            for (Artist artist : result) {
-                System.out.println("NAME: " + artist.getName() + " FOREIGN: " + artist.getForeignIds() + " ID: "+artist.getId());
-            }
+        } catch (Exception e) {
+            this.viewOnSpotifyFallback(artist, track);
         }
     }
 
+    private void viewOnSpotifyFallback(String artist, String track) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setAction(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH);
+            intent.setComponent(new ComponentName(
+                    "com.spotify.music",
+                    "com.spotify.music.MainActivity"));
+            intent.putExtra(SearchManager.QUERY, artist + " - " + track);
+            this.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void playSampledSong(View view) {
+        this.viewOnSpotify(StickyBroadcastReceiver.sampledArtist, StickyBroadcastReceiver.sampledSong);
+    }
 }
