@@ -1,12 +1,22 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.12.+'
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 20
-    buildToolsVersion "20.0.0"
+    buildToolsVersion '20.0.0'
 
     defaultConfig {
-        applicationId "com.wowhack2014.djperro.samplespotter"
-        minSdkVersion 19
+        applicationId "djperro.samplespotter"
+        minSdkVersion 14
         targetSdkVersion 20
         versionCode 1
         versionName "1.0"
@@ -18,7 +28,16 @@ android {
         }
     }
 }
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.squareup.retrofit:retrofit:1.6.1'
+    compile files('libs/jsoup-1.7.3.jar')
+    compile files('libs/eventbus-2.2.1.jar')
 }
