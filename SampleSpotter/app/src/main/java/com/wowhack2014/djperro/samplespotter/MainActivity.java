@@ -31,9 +31,6 @@ public class    MainActivity extends Activity {
         //new DownloadFilesTask().execute();
         EventBus.getDefault().register(this);
 
-        StandOutWindow.closeAll(this, SampledFloatingWindow.class);
-        StandOutWindow.show(this, SampledFloatingWindow.class, StandOutWindow.DEFAULT_ID);
-
         finish();
     }
 

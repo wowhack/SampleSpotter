@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.SampledFloatingWindow;
+import com.wowhack2014.djperro.samplespotter.FloatingSampledPlayer.standout.StandOutWindow;
 import com.wowhack2014.djperro.samplespotter.SampledTools.EchoNest;
 import com.wowhack2014.djperro.samplespotter.SampledTools.Models.Song.Response;
 
@@ -39,6 +41,8 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
     public static String sampledArtist;
     public static String sampledSong;
 
+    private static Context context;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         // This is sent with all broadcasts, regardless of type. The value is taken from
@@ -47,6 +51,8 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
         long timeSentInMs = intent.getLongExtra("timeSent", 0);
         System.out.println(intent);
 
+        this.context = context;
+
         if(intent.getExtras() != null && intent.getExtras().getString("id") != null && intent.getExtras().getString("artist") != null) {
             System.out.println(intent.getExtras());
 
@@ -54,6 +60,7 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
             track = intent.getExtras().getString("track");
             artist = intent.getExtras().getString("artist");
 
+            StandOutWindow.closeAll(context, SampledFloatingWindow.class);
             EventBus.getDefault().post(new SpotifySongChanged(true));
 
             artist = artist.replaceAll("\\s", "%20");
@@ -166,6 +173,9 @@ public class StickyBroadcastReceiver extends BroadcastReceiver {
             sampledArtist = artist;
             sampledSong = song;
 
+
+            StandOutWindow.closeAll(context, SampledFloatingWindow.class);
+            StandOutWindow.show(context, SampledFloatingWindow.class, StandOutWindow.DEFAULT_ID);
 
             // SHOW SAMPLED BUTTON - GUI
         }
